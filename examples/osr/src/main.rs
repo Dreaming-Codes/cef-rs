@@ -325,6 +325,21 @@ impl ApplicationHandler for App {
                     }
                 }
             }
+
+            //// INPUT
+            WindowEvent::CursorMoved { position, .. } => {
+                let scale = state.get_window().scale_factor();
+                let position = position.to_logical(scale);
+                // self.last_pos = position.to_logical(scale);
+                if let Some(host) = self.browser.as_ref().and_then(|b| b.browser.host()) {
+                    let mouse_event = MouseEvent {
+                        x: position.x,
+                        y: position.y,
+                        ..Default::default()
+                    };
+                    host.send_mouse_move_event(Some(&mouse_event), 0);
+                }
+            }
             _ => (),
         }
     }
